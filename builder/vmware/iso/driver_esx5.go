@@ -252,6 +252,10 @@ func (d *ESX5Driver) SSHAddress(state multistep.StateBag) (string, error) {
 		return "", errors.New("VM network port found, but no IP address")
 	}
 
+        if strings.HasPrefix(record["IPAddress"], "169.254")  {
+                return "", errors.New("VM network port found, but link local IP address")
+        }
+
 	address := fmt.Sprintf("%s:%d", record["IPAddress"], config.SSHPort)
 	state.Put("vm_address", address)
 	return address, nil
