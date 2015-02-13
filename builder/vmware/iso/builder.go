@@ -44,6 +44,7 @@ type config struct {
 	VMName          string   `mapstructure:"vm_name"`
 	BootCommand     []string `mapstructure:"boot_command"`
 	SkipCompaction  bool     `mapstructure:"skip_compaction"`
+	SkipUploadtools bool     `mapstructure:"skip_upload_tools"`
 	VMXTemplatePath string   `mapstructure:"vmx_template_path"`
 
 	RemoteType           string `mapstructure:"remote_type"`
@@ -344,6 +345,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			BootCommand: b.config.BootCommand,
 			VMName:      b.config.VMName,
 			Tpl:         b.config.tpl,
+			Skip:        b.config.SkipUploadtools,
 		},
 		&common.StepConnectSSH{
 			SSHAddress:     driver.SSHAddress,
@@ -369,7 +371,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		},
 		&vmwcommon.StepCleanVMX{},
 		&StepUploadVMX{
-			RemoteType:        b.config.RemoteType,
+			RemoteType: b.config.RemoteType,
 		},
 		&vmwcommon.StepCompactDisk{
 			Skip: b.config.SkipCompaction,

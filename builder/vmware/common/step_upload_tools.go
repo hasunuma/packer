@@ -16,10 +16,15 @@ type StepUploadTools struct {
 	ToolsUploadFlavor string
 	ToolsUploadPath   string
 	Tpl               *packer.ConfigTemplate
+	Skip              bool
 }
 
 func (c *StepUploadTools) Run(state multistep.StateBag) multistep.StepAction {
 	driver := state.Get("driver").(Driver)
+
+	if c.Skip == true {
+		return multistep.ActionContinue
+	}
 
 	if c.RemoteType == "esx5" {
 		if err := driver.ToolsInstall(); err != nil {
